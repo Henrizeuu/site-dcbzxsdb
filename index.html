@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luiz | dvvzvz</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          colors: {
+            brand: {
+              primary: '#0a0a0a',   
+              secondary: '#0a0a0a', 
+              accent: '#6e6e73',    
+              bg: '#ffffff',        
+              surface: '#ffffff',
+              text: '#0a0a0a',
+              muted: '#6e6e73',
+              border: '#6e6e7340'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* =============================================
+       BASE & RESET
+    ============================================= */
+    html.lenis, html.lenis body { height: auto; width: 100vw; overflow-x: hidden; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+    body {
+      background-color: #ffffff; color: #0a0a0a;
+      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+      word-break: break-word; overflow-wrap: break-word;
+    }
+
+    /* =============================================
+       CURSOR CUSTOMIZADO & PROGRESS BAR (SÉRIO)
+    ============================================= */
+    #gsap-progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: #6e6e73; z-index: 10000; width: 0; pointer-events: none;
+    }
+    #gsap-cursor {
+      position: fixed; top: 0; left: 0; width: 36px; height: 36px;
+      border-radius: 50%; border: 1px solid #6e6e7399;
+      pointer-events: none; z-index: 9999; opacity: 0; mix-blend-mode: difference;
+      transition: width 0.3s, height 0.3s, background-color 0.3s;
+    }
+    #gsap-cursor-follower {
+      position: fixed; top: 0; left: 0; width: 6px; height: 6px;
+      border-radius: 50%; background: #6e6e73;
+      pointer-events: none; z-index: 9999; opacity: 0; mix-blend-mode: difference;
+    }
+
+    /* =============================================
+       ANIMAÇÕES & COMPONENTES PREMIUM
+    ============================================= */
+    .glass-nav {
+      background: #0a0a0aF2; backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid #6e6e7333;
+    }
+
+    .fade-up { opacity: 0; transform: translateY(40px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    .framer-tilt { transform-style: preserve-3d; will-change: transform; }
+    .framer-magnetic { will-change: transform; display: inline-block; }
+
+    /* Botão Reto / Elegante */
+    .btn-brand {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      background: #6e6e73; color: #ffffff; border-radius: 0px; 
+      padding: 16px 36px; font-weight: 600; font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase;
+      overflow: hidden; transition: all 0.4s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-brand:hover { background: #6e6e73E6; transform: translateY(-2px); box-shadow: 0 10px 20px #6e6e7333; }
+    
+    .btn-brand-outline {
+      border: 1px solid #6e6e73; color: #6e6e73; padding: 16px 36px; border-radius: 0px;
+      font-weight: 600; font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase;
+      transition: all 0.4s ease; background: transparent;
+    }
+    .btn-brand-outline:hover { background: #6e6e73; color: #ffffff; }
+
+    /* Cards Sólidos */
+    .corporate-card {
+      background: #ffffff; border: 1px solid #6e6e7333;
+      padding: 3rem; transition: all 0.4s ease;
+    }
+    .corporate-card:hover { border-color: #6e6e73; box-shadow: 0 10px 30px rgba(0,0,0,0.03); transform: translateY(-5px); }
+
+    /* Decoração de Linha Fina (Pilar) */
+    .divider-gold { width: 40px; height: 2px; background-color: #6e6e73; margin-bottom: 1.5rem; }
+
+    /* FAQ Corporate */
+    .faq-item { border-bottom: 1px solid #6e6e7333; }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+    .faq-answer.open { max-height: 400px; }
+    .faq-icon { transition: transform 0.4s ease; color: #6e6e73; }
+    .faq-icon.open { transform: rotate(180deg); }
+
+    /* =============================================
+       NOVO MÓDULO: CARROSSEL INFINITO (PORTFÓLIO)
+    ============================================= */
+    @keyframes scroll-infinite {
+      from { transform: translateX(0); }
+      to { transform: translateX(-100%); }
+    }
+    .animate-infinite-scroll {
+      animation: scroll-infinite 40s linear infinite;
+    }
+    .portfolio-item {
+      width: 320px; height: 400px; flex-shrink: 0;
+      background: #0a0a0a; border: 1px solid #6e6e7333;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif; font-weight: 500; color: #6e6e73; font-size: 14px;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+      overflow: hidden; cursor: pointer; position: relative;
+    }
+    .portfolio-item::after {
+      content: ''; position: absolute; inset: 0; border: 1px solid transparent; transition: border-color 0.4s ease;
+    }
+    .portfolio-item:hover {
+      transform: translateY(-10px);
+      z-index: 10; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .portfolio-item:hover::after { border-color: #6e6e73; }
+  </style>
+</head>
+<body>
+
+  <div id="gsap-progress-bar"></div>
+  <div id="gsap-cursor" class="hidden md:block"></div>
+  <div id="gsap-cursor-follower" class="hidden md:block"></div>
+
+  <nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300 py-3" id="navbar">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="font-serif text-2xl tracking-wider text-white framer-magnetic cursor-pointer uppercase">
+        luiz
+      </div>
+      <a href="#contato" class="btn-brand py-3 px-8 text-xs framer-magnetic hidden md:inline-flex">Falar com Especialista</a>
+    </div>
+  </nav>
+
+  <section class="relative pt-48 pb-32 px-6 bg-brand-primary text-white overflow-hidden min-h-[85vh] flex items-center">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#6e6e7340_0%,_#0a0a0a_80%)]"></div>
+    
+    <div class="max-w-5xl mx-auto relative z-10 text-center">
+      <div class="fade-up flex justify-center mb-6">
+        <span class="text-xs uppercase tracking-[0.2em] text-brand-accent font-semibold border border-brand-accent/30 px-4 py-2">
+          dvvzvz em Passo de Torres - SC
+        </span>
+      </div>
+      
+      <h1 class="fade-up text-[clamp(40px,5.5vw,72px)] font-serif leading-[1.1] text-white mb-8">
+        sacasc
+      </h1>
+      
+      <p class="fade-up text-[clamp(16px,1.5vw,20px)] text-gray-300 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+        dvasdv
+      </p>
+      
+      <div class="fade-up flex flex-col sm:flex-row justify-center gap-4">
+        <a href="#contato" class="btn-brand framer-magnetic">asvasv</a>
+        
+        <a href="#areas" class="btn-brand-outline framer-magnetic">Conhecer Especialidades</a>
+        
+      </div>
+
+      <div class="fade-up mt-20 w-full aspect-[16/9] md:aspect-[21/9] border border-brand-accent/20 overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center justify-center">
+        
+        <div class="absolute inset-0 bg-brand-secondary/50 flex items-center justify-center text-brand-muted font-serif">
+          [ Imagem de Fachada / Imponência ]
+        </div>
+        
+      </div>
+
+    </div>
+  </section>
+
+  
+  <section class="py-28 px-6 bg-brand-bg">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-20 fade-up">
+        <div class="divider-gold mx-auto"></div>
+        <h2 class="text-4xl md:text-5xl font-serif text-brand-primary leading-tight">Os desafios que são resolvidos
+</h2>
+        <p class="text-brand-muted mt-4 max-w-2xl mx-auto">Compreendendo as exigências do seu dia a dia e entregando com precisão e técnica.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        
+        <div class="corporate-card fade-up framer-tilt">
+          <div class="text-3xl font-serif text-brand-accent mb-6 opacity-50">I.</div>
+          <p class="text-brand-text font-medium leading-relaxed text-lg">acAC</p>
+        </div>
+        
+
+        
+        <div class="corporate-card fade-up framer-tilt" style="transition-delay: 100ms;">
+          <div class="text-3xl font-serif text-brand-accent mb-6 opacity-50">II.</div>
+          <p class="text-brand-text font-medium leading-relaxed text-lg">CAC</p>
+        </div>
+        
+
+        
+        <div class="corporate-card fade-up framer-tilt" style="transition-delay: 200ms;">
+          <div class="text-3xl font-serif text-brand-accent mb-6 opacity-50">III.</div>
+          <p class="text-brand-text font-medium leading-relaxed text-lg">ASCAC</p>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+  
+
+  
+  <section class="py-32 px-6 bg-white border-y border-brand-border">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+      
+      <div class="fade-up relative">
+        <div class="w-full aspect-square bg-brand-bg overflow-hidden relative flex flex-col items-center justify-center text-brand-muted font-serif p-8 text-center border-4 border-white">
+          <div class="absolute inset-0 bg-brand-secondary/5 z-0"></div>
+          
+          [  ] <br> Foto Principal / Estrutura
+          
+        </div>
+        <div class="absolute -bottom-6 -left-6 w-32 h-32 border-l-2 border-b-2 border-brand-accent hidden md:block"></div>
+      </div>
+
+      <div class="fade-up">
+        <div class="divider-gold"></div>
+        <h2 class="text-4xl md:text-5xl font-serif text-brand-primary leading-tight mb-8">Compromisso, ética e resultados comprovados.</h2>
+        <p class="text-lg text-brand-muted leading-relaxed mb-8 text-justify">
+          FACSC
+        </p>
+        
+        <div class="flex items-center gap-6 mt-10 p-6 bg-brand-bg border-l-4 border-brand-accent">
+          <div class="text-4xl font-serif text-brand-primary font-bold">"</div>
+          <p class="text-brand-text font-serif italic text-lg leading-relaxed">Nosso trabalho é pautado pela excelência, foco nos mínimos detalhes e dedicação total a cada cliente.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  
+
+  
+  <section id="areas" class="py-32 px-6 bg-brand-primary text-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-20 fade-up">
+        <div>
+          <div class="divider-gold"></div>
+          <h2 class="text-4xl md:text-5xl font-serif text-white leading-tight">Nossas Especialidades</h2>
+        </div>
+        <a href="#contato" class="text-sm uppercase tracking-[0.1em] text-brand-accent hover:text-white transition-colors mt-6 md:mt-0 flex items-center gap-2">
+          Ver oque é feito <span>→</span>
+        </a>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-px bg-white/10"> 
+        
+        <div class="bg-brand-primary p-12 fade-up group hover:bg-brand-secondary transition-colors duration-500 cursor-default">
+          <h3 class="text-2xl font-serif text-brand-accent mb-4">VD</h3>
+          <p class="text-gray-400 font-light leading-relaxed">VDZV Z</p>
+        </div>
+        
+        
+        
+        
+        
+      </div>
+    </div>
+  </section>
+  
+
+  
+
+  
+  <section class="py-20 px-6 bg-brand-accent text-brand-primary">
+    <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-8 text-center divide-x divide-brand-primary/20">
+      
+      <div class="fade-up framer-tilt">
+        <div class="text-5xl md:text-7xl font-serif font-bold mb-2 counter" data-target="15">0</div>
+        <div class="text-sm font-bold uppercase tracking-widest text-brand-primary/80">Anos de Atuação</div>
+      </div>
+      
+      
+      <div class="fade-up framer-tilt delay-100">
+        <div class="text-5xl md:text-7xl font-serif font-bold mb-2 counter" data-target="245">0</div>
+        <div class="text-sm font-bold uppercase tracking-widest text-brand-primary/80">Projetos / Clientes</div>
+      </div>
+      
+      <div class="fade-up framer-tilt delay-200 col-span-2 md:col-span-1 border-none md:border-l">
+        <div class="text-5xl md:text-7xl font-serif font-bold mb-2">Alto</div>
+        <div class="text-sm font-bold uppercase tracking-widest text-brand-primary/80">Índice de Qualidade</div>
+      </div>
+    </div>
+  </section>
+  
+
+  
+  <section class="py-32 px-6 bg-white">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-20 fade-up">
+        <div class="divider-gold mx-auto"></div>
+        <h2 class="text-4xl md:text-5xl font-serif text-brand-primary leading-tight">Nossa Metodologia</h2>
+      </div>
+      
+      <div class="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-brand-border">
+        
+        
+        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-up">
+          <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-brand-primary text-white font-serif shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">1</div>
+          <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] corporate-card p-8">
+            <h3 class="font-serif text-2xl text-brand-primary mb-2"> ZX </h3>
+            <p class="text-brand-muted font-light text-sm">Análise detalhada e alinhamento de expectativas no primeiro contato.</p>
+          </div>
+        </div>
+        
+
+        
+        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-up">
+          <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-brand-accent text-brand-primary font-serif shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">2</div>
+          <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] corporate-card p-8">
+            <h3 class="font-serif text-2xl text-brand-primary mb-2">Z XZ </h3>
+            <p class="text-brand-muted font-light text-sm">Planejamento e execução com máximo rigor técnico e estético.</p>
+          </div>
+        </div>
+        
+
+        
+        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active fade-up">
+          <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-brand-secondary text-white font-serif shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">3</div>
+          <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] corporate-card p-8">
+            <h3 class="font-serif text-2xl text-brand-primary mb-2"> ZX </h3>
+            <p class="text-brand-muted font-light text-sm">Entrega do resultado final para garantir excelência.</p>
+          </div>
+        </div>
+        
+
+      </div>
+    </div>
+  </section>
+  
+
+  
+  <section class="py-28 px-6 bg-brand-bg border-t border-brand-border">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-16 fade-up">
+        <h2 class="text-4xl font-serif text-brand-primary">Dúvidas Frequentes</h2>
+      </div>
+      
+      <div class="bg-white border border-brand-border p-4 shadow-sm">
+        
+        <div class="faq-item fade-up">
+          <button class="w-full flex items-center justify-between py-6 px-4 text-left cursor-pointer group" onclick="toggleFaq(this)">
+            <span class="font-serif text-xl text-brand-primary group-hover:text-brand-accent transition-colors">X Z</span>
+            <span class="faq-icon text-xl">▼</span>
+          </button>
+          <div class="faq-answer px-4">
+            <p class="pb-6 text-brand-muted font-light leading-relaxed"> ZX </p>
+          </div>
+        </div>
+        
+
+        
+
+        
+
+        
+      </div>
+    </div>
+  </section>
+  
+
+  <section id="contato" class="py-32 px-6 bg-brand-primary text-center text-white relative">
+    <div class="max-w-4xl mx-auto relative z-10 fade-up">
+      <div class="divider-gold mx-auto mb-8"></div>
+      <h2 class="text-[clamp(36px,5vw,56px)] font-serif mb-6 leading-tight">
+        Dê o próximo passo com qualidade.
+      </h2>
+      <p class="text-lg text-gray-400 font-light mb-12 max-w-2xl mx-auto">
+        À disposição para fornecer o atendimento estratégico e focado que você necessita. Solicite um orçamento.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+        <div class="framer-magnetic w-full sm:w-auto">
+          <a href="https://wa.me/48992086832?text=acsasc" class="btn-brand w-full">
+            Entrar em Contato Agora
+          </a>
+        </div>
+        
+        <div class="framer-magnetic w-full sm:w-auto">
+          <a href="https://instagram.com/epiverso" class="btn-brand-outline w-full flex items-center justify-center gap-2">
+            Acompanhe no Instagram
+          </a>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-12 text-center border-t border-brand-secondary bg-brand-primary text-gray-500">
+    <p class="text-xs uppercase tracking-widest mb-4 text-brand-accent">
+      📍 rua getulio vargas, 615
+    </p>
+    <p class="text-xs uppercase tracking-widest">
+      &copy; 2026 luiz. Desenvolvido com excelência por Epiverso.
+    </p>
+  </footer>
+
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Lenis Smooth Scroll
+      const lenis = new Lenis({
+        duration: 1.4, 
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smooth: true,
+      });
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+      
+      gsap.registerPlugin(ScrollTrigger);
+      lenis.on('scroll', ScrollTrigger.update);
+
+      // Barra de Progresso Topo
+      gsap.to("#gsap-progress-bar", {
+        width: "100%", ease: "none", 
+        scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.3 }
+      });
+
+      // Reveal Elements
+      const fadeEls = document.querySelectorAll('.fade-up');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, idx) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => { entry.target.classList.add('visible'); }, 100);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      fadeEls.forEach(el => observer.observe(el));
+
+      // Cursor Customizado
+      const cursor = document.getElementById('gsap-cursor');
+      const follower = document.getElementById('gsap-cursor-follower');
+      if (cursor && follower && window.innerWidth >= 768) {
+        gsap.set([cursor, follower], { xPercent: -50, yPercent: -50 });
+        const xToCursor = gsap.quickTo(cursor, "x", {duration: 0.2, ease: "power3"});
+        const yToCursor = gsap.quickTo(cursor, "y", {duration: 0.2, ease: "power3"});
+        const xToFollower = gsap.quickTo(follower, "x", {duration: 0.6, ease: "power3"});
+        const yToFollower = gsap.quickTo(follower, "y", {duration: 0.6, ease: "power3"});
+        
+        window.addEventListener('mousemove', (e) => {
+          cursor.style.opacity = 1; follower.style.opacity = 1;
+          xToCursor(e.clientX); yToCursor(e.clientY);
+          xToFollower(e.clientX); yToFollower(e.clientY);
+        });
+
+        document.querySelectorAll('a, button, .framer-magnetic, .corporate-card, .portfolio-item').forEach(el => {
+          el.addEventListener('mouseenter', () => {
+            gsap.to(cursor, {scale: 1.5, backgroundColor: "#6e6e731A", borderColor: "#6e6e73CC", duration: 0.4});
+            gsap.to(follower, {scale: 0.5, duration: 0.3});
+          });
+          el.addEventListener('mouseleave', () => {
+            gsap.to(cursor, {scale: 1, backgroundColor: "transparent", borderColor: "#6e6e7399", duration: 0.4});
+            gsap.to(follower, {scale: 1, duration: 0.3});
+          });
+        });
+      }
+
+      // Efeito Magnetic
+      document.querySelectorAll('.framer-magnetic').forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = `translate(0px, 0px)`;
+          btn.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        });
+      });
+
+      // Efeito Tilt
+      document.querySelectorAll('.framer-tilt').forEach(el => {
+        el.addEventListener('mousemove', (e) => {
+          if(window.innerWidth < 768) return; 
+          const rect = el.getBoundingClientRect();
+          const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+          const centerX = rect.width / 2; const centerY = rect.height / 2;
+          const rotateX = ((y - centerY) / centerY) * -2; 
+          const rotateY = ((x - centerX) / centerX) * 2;
+          el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+          el.style.transition = 'none';
+        });
+        el.addEventListener('mouseleave', () => {
+          el.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+          el.style.transition = 'transform 0.8s ease-out';
+        });
+      });
+
+      // Contador Animado
+      const counters = document.querySelectorAll('.counter');
+      counters.forEach(counter => {
+        ScrollTrigger.create({
+          trigger: counter,
+          start: "top 85%",
+          once: true,
+          onEnter: () => {
+            const target = +counter.getAttribute('data-target') || 0;
+            gsap.to(counter, {
+              innerHTML: target,
+              duration: 2.5,
+              snap: { innerHTML: 1 },
+              ease: "power2.out"
+            });
+          }
+        });
+      });
+      
+    });
+
+    // Função FAQ
+    function toggleFaq(button) {
+      const answer = button.nextElementSibling;
+      const icon = button.querySelector('.faq-icon');
+      const isOpen = answer.classList.contains('open');
+
+      document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-icon').forEach(i => { i.classList.remove('open'); });
+
+      if (!isOpen) {
+        answer.classList.add('open');
+        icon.classList.add('open');
+      }
+      
+      setTimeout(() => ScrollTrigger.refresh(), 500);
+    }
+  </script>
+</body>
+</html>
